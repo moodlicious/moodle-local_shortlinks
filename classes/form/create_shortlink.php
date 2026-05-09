@@ -31,6 +31,12 @@ use core\context\system;
 class create_shortlink extends dynamic_form {
     #[\Override]
     public function definition() {
+        $form = $this->_form;
+
+        $form->addElement('text', 'destinationurl', get_string('destinationurl', 'local_shortlinks'));
+        $form->setType('destinationurl', PARAM_URL);
+
+        $this->add_action_buttons(false, get_string('create'));
     }
 
     #[\Override]
@@ -56,5 +62,18 @@ class create_shortlink extends dynamic_form {
     #[\Override]
     protected function get_page_url_for_dynamic_submission(): url {
         return new url(\local_shortlinks\output\pages\home::URL);
+    }
+
+    #[\Override]
+    public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+
+        try {
+            new url($data['destinationurl']);
+        } catch (\Throwable $th) {
+            $errors['destinationurl'] = get_string('invalidurl', 'error');
+        }
+
+        return $errors;
     }
 }

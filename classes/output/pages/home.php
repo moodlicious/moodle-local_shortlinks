@@ -17,8 +17,10 @@
 namespace local_shortlinks\output\pages;
 
 use core\output\named_templatable;
+use core\output\notification;
 use core\output\renderable;
 use core\output\renderer_base;
+use local_shortlinks\local\link;
 
 /**
  * Short link handler.
@@ -44,6 +46,38 @@ class home implements named_templatable, renderable {
         $PAGE->set_title($title);
         $PAGE->set_heading($title);
         $this->form = new \local_shortlinks\form\create_shortlink();
+        $this->handle_form();
+    }
+
+    /**
+     * Handles form.
+     * @return void
+     */
+    public function handle_form() {
+        global $CFG, $USER;
+
+        $data = $this->form->get_data();
+        if (!$data) {
+            return;
+        }
+
+        $api = \core\di::get(\core\shortlink::class);
+        $db = \core\di::get(\moodle_database::class);
+
+        $transaction = $db->start_delegated_transaction();
+
+        $link = new link(record: (object) [
+            'userid' => $USER->id,
+            'destinationurl' => $data->destinationurl,
+            'shorturl' => $CFG->wwwroot, // Temporary until the actual shorturl is generated.
+        ]);
+        $link->save();
+        $shorturl = $api->create_public_shortlink('local_shortlinks', 'url', $link->get('id'));
+        $link->set('shorturl', $shorturl->out_as_local_url(false));
+        $link->save();
+
+        $transaction->allow_commit();
+        redirect(self::URL, get_string('success:created', 'local_shortlinks'), null, notification::NOTIFY_SUCCESS);
     }
 
     #[\Override]

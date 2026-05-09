@@ -24,5 +24,7 @@
  * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['destinationurl'] = 'Destination URL';
 $string['pages:home:create'] = 'Create short Link';
 $string['pluginname'] = 'Short Links';
+$string['success:created'] = 'Short Link successfully created';
