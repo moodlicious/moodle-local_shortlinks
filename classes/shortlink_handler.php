@@ -18,6 +18,7 @@ namespace local_shortlinks;
 
 use core\shortlink_handler_interface;
 use core\url;
+use local_shortlinks\local\link;
 
 /**
  * Short link handler.
@@ -34,7 +35,28 @@ class shortlink_handler implements shortlink_handler_interface {
 
     #[\Override]
     public function process_shortlink(string $type, string $identifier): ?url {
-        // TODO: Retrieve real destination from database.
-        return new url('https://example.com');
+        return match ($type) {
+            'url' => $this->get_url($identifier),
+            default => null,
+        };
+    }
+
+    /**
+     * Resolves the destination URL.
+     * @param mixed $identifier
+     * @return url|null
+     */
+    private function get_url($identifier): ?url {
+        $link = link::get_record(['id' => $identifier]);
+        if ($link === false) {
+            return null;
+        }
+
+        try {
+            return new url($link->get('destinationurl'));
+        } catch (\Exception $th) {
+            debugging($th->getMessage(), DEBUG_DEVELOPER, $th->getTrace());
+            return null;
+        }
     }
 }
