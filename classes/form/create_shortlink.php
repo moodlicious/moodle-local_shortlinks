@@ -96,7 +96,13 @@ class create_shortlink extends dynamic_form {
         $errors = parent::validation($data, $files);
 
         try {
-            new url($data['destinationurl']);
+            $destinationurl = $data['destinationurl'];
+            if (!trim($destinationurl)) {
+                throw new \Exception('URL required..');
+            }
+
+            // Url constructor will throw error on invalid URLs.
+            new url($destinationurl);
         } catch (\Exception $th) {
             $errors['destinationurl'] = get_string('invalidurl', 'error');
         }
