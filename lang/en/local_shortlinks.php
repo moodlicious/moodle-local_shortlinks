@@ -25,7 +25,7 @@
  */
 
 $string['destinationurl'] = 'Destination URL';
-$string['pages:home:create'] = 'Create short Link';
+$string['form:create'] = 'Create short link';
 $string['pluginname'] = 'Short Links';
 $string['shorturl'] = 'Shortened URL';
 $string['success:created'] = 'Short Link successfully created';

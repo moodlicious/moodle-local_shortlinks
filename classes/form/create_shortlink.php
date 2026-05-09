@@ -17,9 +17,11 @@
 namespace local_shortlinks\form;
 
 use core\context;
+use core\exception\moodle_exception;
 use core\url;
 use core_form\dynamic_form;
 use core\context\system;
+use local_shortlinks\local\link;
 
 /**
  * Form to create new short links.
@@ -35,8 +37,6 @@ class create_shortlink extends dynamic_form {
 
         $form->addElement('text', 'destinationurl', get_string('destinationurl', 'local_shortlinks'));
         $form->setType('destinationurl', PARAM_URL);
-
-        $this->add_action_buttons(false, get_string('create'));
     }
 
     #[\Override]
@@ -46,12 +46,39 @@ class create_shortlink extends dynamic_form {
 
     #[\Override]
     protected function check_access_for_dynamic_submission(): void {
+        if (!isloggedin()) {
+            throw new moodle_exception('unauthorised');
+        }
         return;
     }
 
     #[\Override]
     public function process_dynamic_submission() {
-        return;
+        global $CFG, $USER;
+
+        $data = $this->get_data();
+        if (!$data) {
+            return ['success' => false];
+        }
+
+        $api = \core\di::get(\core\shortlink::class);
+        $db = \core\di::get(\moodle_database::class);
+
+        $transaction = $db->start_delegated_transaction();
+
+        $link = new link(record: (object) [
+            'userid' => $USER->id,
+            'destinationurl' => $data->destinationurl,
+            'shorturl' => $CFG->wwwroot, // Temporary until the actual shorturl is generated.
+        ]);
+        $link->save();
+        $shorturl = $api->create_public_shortlink('local_shortlinks', 'url', $link->get('id'));
+        $link->set('shorturl', $shorturl->out_as_local_url(false));
+        $link->save();
+
+        $transaction->allow_commit();
+
+        return ['success' => true];
     }
 
     #[\Override]
@@ -70,7 +97,7 @@ class create_shortlink extends dynamic_form {
 
         try {
             new url($data['destinationurl']);
-        } catch (\Throwable $th) {
+        } catch (\Exception $th) {
             $errors['destinationurl'] = get_string('invalidurl', 'error');
         }
 
