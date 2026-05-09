@@ -16,6 +16,7 @@
 
 namespace local_shortlinks\output\pages;
 
+use core\output\html_writer;
 use core\output\named_templatable;
 use core\output\notification;
 use core\output\renderable;
@@ -82,7 +83,17 @@ class home implements named_templatable, renderable {
 
     #[\Override]
     public function export_for_template(renderer_base $renderer): array {
-        return ['html' => $this->form->render()];
+        $table = new \local_shortlinks\output\tables\links('links');
+
+        ob_start();
+        $table->out(10, true);
+        $tablehtml = ob_get_contents();
+        ob_end_clean();
+
+        return ['html' => implode([
+            html_writer::tag('section', $this->form->render()),
+            html_writer::tag('section', $tablehtml),
+        ])];
     }
 
     #[\Override]
