@@ -15,14 +15,19 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * English strings.
- *
- * @var array<string, string> $string
+ * Home page.
  *
  * @package   local_shortlinks
  * @copyright 2026 Felix Yeung
  * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pages:home:create'] = 'Create short Link';
-$string['pluginname'] = 'Short Links';
+require_once(__DIR__ . '/../../config.php');
+
+require_login();
+
+$page = new \local_shortlinks\output\pages\home();
+
+echo $OUTPUT->header();
+echo $OUTPUT->render($page);
+echo $OUTPUT->footer();
