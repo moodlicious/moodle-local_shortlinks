@@ -103,12 +103,16 @@ class create_shortlink extends dynamic_form {
         try {
             $destinationurl = $data['destinationurl'];
             if (!trim($destinationurl)) {
-                throw new \Exception('URL required..');
+                throw new Exception('URL required..');
+            }
+
+            if (!str_starts_with(strtolower($destinationurl), 'https://')) {
+                throw new Exception('URL must start with https://');
             }
 
             // Url constructor will throw error on invalid URLs.
             new url($destinationurl);
-        } catch (\Exception $th) {
+        } catch (Exception $th) {
             $errors['destinationurl'] = get_string('invalidurl', 'error');
         }
 
