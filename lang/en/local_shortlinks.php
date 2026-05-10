@@ -25,6 +25,7 @@
  */
 
 $string['destinationurl'] = 'Destination URL';
+$string['error:create'] = 'Something went wrong while creating your link, please try again later.';
 $string['form:create'] = 'Create short link';
 $string['pluginname'] = 'Short Links';
 $string['shortlinks:create'] = 'Create short links';

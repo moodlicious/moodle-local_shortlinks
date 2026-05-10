@@ -21,11 +21,15 @@ export const init = () => {
             saveButtonText: getString("create"),
         });
 
-        modal.addEventListener(modal.events.FORM_SUBMITTED, () =>
-            getString("success:created", "local_shortlinks")
-                .then((message) => addToast(message, {}))
-                .then(() => window.location.reload())
-                .catch(notification.exception),
+        modal.addEventListener(modal.events.FORM_SUBMITTED, ({detail}) =>
+            detail.success
+                ? getString("success:created", "local_shortlinks")
+                      .then((message) => addToast(message, {}))
+                      .then(() => window.location.reload())
+                      .catch(notification.exception)
+                : getString("error:create", "local_shortlinks")
+                      .then((message) => addToast(message, {}))
+                      .catch(notification.exception),
         );
 
         modal.show();

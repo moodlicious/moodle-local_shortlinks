@@ -59,7 +59,7 @@ class create_shortlink extends dynamic_form {
         try {
             api::create($data->destinationurl);
         } catch (Exception $th) {
-            return false;
+            return ['success' => false];
         }
 
         return ['success' => true];
