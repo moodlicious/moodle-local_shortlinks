@@ -26,7 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version = 2026050901;
+$plugin->version = 2026051000;
 $plugin->requires = 2026042000;
 $plugin->component = 'local_shortlinks';
 $plugin->maturity = MATURITY_ALPHA;

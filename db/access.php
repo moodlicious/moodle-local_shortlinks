@@ -15,20 +15,36 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Home page.
+ * Plugin capabilities are defined here.
  *
  * @package   local_shortlinks
+ * @category  access
  * @copyright 2026 Felix Yeung
  * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(__DIR__ . '/../../config.php');
+defined('MOODLE_INTERNAL') || die;
 
-require_login();
-require_capability('local/shortlinks:create', \core\context\system::instance());
-
-$page = new \local_shortlinks\output\pages\home();
-
-echo $OUTPUT->header();
-echo $OUTPUT->render($page);
-echo $OUTPUT->footer();
+$capabilities = [
+    'local/shortlinks:create' => [
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [
+            'user' => CAP_ALLOW,
+        ],
+    ],
+    'local/shortlinks:delete' => [
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [
+            'user' => CAP_ALLOW,
+        ],
+    ],
+    'local/shortlinks:edit' => [
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [
+            'user' => CAP_ALLOW,
+        ],
+    ],
+];

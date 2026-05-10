@@ -17,7 +17,6 @@
 namespace local_shortlinks\form;
 
 use core\context;
-use core\exception\moodle_exception;
 use core\url;
 use core_form\dynamic_form;
 use core\context\system;
@@ -46,10 +45,7 @@ class create_shortlink extends dynamic_form {
 
     #[\Override]
     protected function check_access_for_dynamic_submission(): void {
-        if (!isloggedin()) {
-            throw new moodle_exception('unauthorised');
-        }
-        return;
+        require_capability('local/shortlinks:create', system::instance());
     }
 
     #[\Override]

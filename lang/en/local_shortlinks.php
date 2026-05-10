@@ -27,5 +27,8 @@
 $string['destinationurl'] = 'Destination URL';
 $string['form:create'] = 'Create short link';
 $string['pluginname'] = 'Short Links';
+$string['shortlinks:create'] = 'Create short links';
+$string['shortlinks:delete'] = 'Delete short links';
+$string['shortlinks:edit'] = 'Edit short links';
 $string['shorturl'] = 'Shortened URL';
 $string['success:created'] = 'Short Link successfully created';
