@@ -79,7 +79,7 @@ class links extends system_report {
     }
 
     /**
-     * Adds report filters.
+     * Adds report conditions.
      * @return void
      */
     protected function set_conditions(): void {
