@@ -43,10 +43,10 @@ class shortlink_handler implements shortlink_handler_interface {
 
     /**
      * Resolves the destination URL.
-     * @param mixed $identifier
+     * @param string $identifier
      * @return url|null
      */
-    private function get_url($identifier): ?url {
+    private function get_url(string $identifier): ?url {
         $link = link::get_record(['id' => $identifier]);
         if ($link === false) {
             return null;
