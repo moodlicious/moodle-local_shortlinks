@@ -48,13 +48,17 @@ class home implements named_templatable, renderable {
         $PAGE->requires->js_call_amd('local_shortlinks/main', 'init', []);
     }
 
+    /**
+     * {@inheritDoc}
+     * @return mixed[]
+     */
     #[\Override]
     public function export_for_template(renderer_base $renderer): array {
         $table = new \local_shortlinks\output\tables\links('links');
 
         ob_start();
         $table->out(10, true);
-        $tablehtml = ob_get_contents();
+        $tablehtml = ob_get_contents() ?: '';
         ob_end_clean();
 
         return ['html' => implode([

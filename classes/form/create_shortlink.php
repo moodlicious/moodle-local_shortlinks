@@ -31,7 +31,7 @@ use local_shortlinks\local\link;
  */
 class create_shortlink extends dynamic_form {
     #[\Override]
-    public function definition() {
+    public function definition(): void {
         $form = $this->_form;
 
         $form->addElement('text', 'destinationurl', get_string('destinationurl', 'local_shortlinks'));
@@ -87,6 +87,12 @@ class create_shortlink extends dynamic_form {
         return new url(\local_shortlinks\output\pages\home::URL);
     }
 
+    /**
+     * Validate destination URL is acceptable.
+     * @param array<string, mixed> $data
+     * @param array<string, mixed> $files
+     * @return array<string, string>
+     */
     #[\Override]
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);

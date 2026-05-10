@@ -29,8 +29,12 @@ class link extends persistent {
     /** @var string The table name. */
     public const TABLE = 'local_shortlinks';
 
+    /**
+     * {@inheritDoc}
+     * @return array<string, mixed>[]
+     */
     #[\Override]
-    protected static function define_properties() {
+    protected static function define_properties(): array {
         return [
             'userid' => [
                 'type' => PARAM_INT,

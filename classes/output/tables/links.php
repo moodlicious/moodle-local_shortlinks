@@ -34,6 +34,7 @@ require_once($CFG->libdir . '/tablelib.php');
 class links extends table_sql {
     /**
      * Constructor.
+     * @param string $uniqueid
      */
     public function __construct($uniqueid) {
         parent::__construct($uniqueid);
@@ -81,7 +82,7 @@ class links extends table_sql {
     }
 
     #[\Override]
-    public function query_db($pagesize, $useinitialsbar = true) {
+    public function query_db($pagesize, $useinitialsbar = true): void {
         global $USER;
         $filter = ['userid' => $USER->id];
         $total = link::count_records($filter);

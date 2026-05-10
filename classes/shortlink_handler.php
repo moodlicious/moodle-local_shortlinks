@@ -28,6 +28,10 @@ use local_shortlinks\local\link;
  * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class shortlink_handler implements shortlink_handler_interface {
+    /**
+     * {@inheritDoc}
+     * @return string[]
+     */
     #[\Override]
     public function get_valid_linktypes(): array {
         return ['url'];
