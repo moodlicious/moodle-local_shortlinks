@@ -41,6 +41,14 @@ class create_shortlink extends dynamic_form {
 
         $form->addElement('checkbox', 'unguessable', get_string('unguessable', 'local_shortlinks'));
         $form->addHelpButton('unguessable', 'unguessable', 'local_shortlinks');
+
+        $form->addElement('header', 'advanced', get_string('advanced'));
+        $form->setExpanded('advanced', false);
+
+        $form->addElement('tags', 'tags', get_string('tags'), [
+            'itemtype' => 'local_shortlinks',
+            'component' => 'local_shortlinks',
+        ]);
     }
 
     #[\Override]
@@ -63,7 +71,8 @@ class create_shortlink extends dynamic_form {
         try {
             $destinationurl = $data->destinationurl;
             $type = $data->unguessable ? type::LONG : type::SHORT;
-            api::create($destinationurl, type: $type);
+            $tags = $data->tags;
+            api::create($destinationurl, type: $type, tags: $tags);
         } catch (Exception $th) {
             return ['success' => false];
         }

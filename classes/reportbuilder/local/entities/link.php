@@ -22,10 +22,12 @@ use core\output\html_writer;
 use core\url;
 use core_reportbuilder\local\entities\base;
 use core_reportbuilder\local\filters\date;
+use core_reportbuilder\local\filters\tags;
 use core_reportbuilder\local\filters\user;
 use core_reportbuilder\local\helpers\format;
 use core_reportbuilder\local\report\column;
 use core_reportbuilder\local\report\filter;
+use core_tag_tag;
 use local_shortlinks\local\link as link_model;
 
 /**
@@ -38,7 +40,11 @@ use local_shortlinks\local\link as link_model;
 class link extends base {
     #[\Override]
     protected function get_default_tables(): array {
-        return [link_model::TABLE];
+        return [
+            link_model::TABLE,
+            'tag_instance',
+            'tag',
+        ];
     }
 
     #[\Override]
@@ -114,7 +120,34 @@ class link extends base {
         ))
             ->add_joins($this->get_joins());
 
+        // Tags.
+        $filters[] = (new filter(
+            tags::class,
+            'tags',
+            new lang_string('tags'),
+            $this->get_entity_name(),
+            "{$tablealias}.id",
+        ))
+            ->set_options([
+                'component' => 'local_shortlinks',
+                'itemtype' => 'local_shortlinks',
+            ])
+            ->set_is_available(core_tag_tag::is_enabled('local_shortlinks', 'local_shortlinks') === true);
+
         return $filters;
+    }
+
+    /**
+     * Return joins necessary for retrieving tags.
+     * @return string[]
+     */
+    public function get_tag_joins(): array {
+        $tablealias = $this->get_table_alias(link_model::TABLE);
+        return $this->get_tag_joins_for_entity(
+            component: 'local_shortlinks',
+            itemtype: 'local_shortlinks',
+            itemidfield: "$tablealias.id",
+        );
     }
 
     /**

@@ -15,24 +15,19 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * English strings.
- *
- * @var array<string, string> $string
+ * Tag areas.
  *
  * @package   local_shortlinks
  * @copyright 2026 Felix Yeung
  * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['destinationurl'] = 'Destination URL';
-$string['error:create'] = 'Something went wrong while creating your link, please try again later.';
-$string['form:create'] = 'Create short link';
-$string['pluginname'] = 'Short Links';
-$string['shortlinks:create'] = 'Create short links';
-$string['shortlinks:delete'] = 'Delete short links';
-$string['shortlinks:edit'] = 'Edit short links';
-$string['shorturl'] = 'Shortened URL';
-$string['success:created'] = 'Short Link successfully created';
-$string['tagarea_local_shortlinks'] = 'Short links';
-$string['unguessable'] = 'Unguessable';
-$string['unguessable_help'] = 'Creates longer link which will help prevent users or bots from guessing or crawling';
+defined('MOODLE_INTERNAL') || die;
+
+$tagareas = [
+    [
+        'itemtype' => 'local_shortlinks',
+        'callback' => 'local_shortlinks_get_tagged_links',
+        'callbackfile' => '/local/shortlinks/locallib.php',
+    ],
+];

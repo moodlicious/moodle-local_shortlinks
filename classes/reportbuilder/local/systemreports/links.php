@@ -18,6 +18,7 @@ namespace local_shortlinks\reportbuilder\local\systemreports;
 
 use core_reportbuilder\local\filters\user;
 use core_reportbuilder\system_report;
+use core_tag\reportbuilder\local\entities\tag;
 use local_shortlinks\local\link;
 use local_shortlinks\reportbuilder\local\entities\link as link_entity;
 
@@ -36,6 +37,11 @@ class links extends system_report {
 
         $this->set_main_table(link::TABLE, $entitymainalias);
         $this->add_entity($entitymain);
+
+        // Join the tag entity.
+        $tagentity = (new tag())
+            ->set_table_alias('tag', $entitymain->get_table_alias('tag'));
+        $this->add_entity($tagentity->add_joins($entitymain->get_tag_joins()));
 
         $this->add_columns();
         $this->add_filters();
@@ -63,6 +69,8 @@ class links extends system_report {
             'link:shorturl',
             'link:destinationurl',
             'link:timecreated',
+            // Not adding 'tag:name' column here because it doesn't display all tags within the same row,
+            // but splits multiple tags for the same link across multiple rows.
         ];
         $this->add_columns_from_entities($columns);
     }
@@ -73,6 +81,7 @@ class links extends system_report {
      */
     protected function add_filters(): void {
         $columns = [
+            // Not adding 'link:tags' filter here because it makes tag suggestions for tags created by other users too.
             'link:timecreated',
         ];
         $this->add_filters_from_entities($columns);

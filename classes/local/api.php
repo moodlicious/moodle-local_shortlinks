@@ -16,6 +16,8 @@
 
 namespace local_shortlinks\local;
 
+use core\context\user;
+use core_tag_tag;
 use local_shortlinks\local\enums\type;
 
 /**
@@ -41,9 +43,10 @@ class api {
      * Creates a short link for the current user.
      * @param string $destinationurl
      * @param type $type
+     * @param string[] $tags
      * @return void
      */
-    public static function create(string $destinationurl, type $type = type::SHORT): void {
+    public static function create(string $destinationurl, type $type = type::SHORT, array $tags = []): void {
         global $CFG, $USER;
         $api = \core\di::get(\core\shortlink::class);
         $db = \core\di::get(\moodle_database::class);
@@ -58,6 +61,13 @@ class api {
             'shorturl' => $CFG->wwwroot, // Temporary until the actual shorturl is generated.
         ]);
         $link->save();
+        core_tag_tag::set_item_tags(
+            'local_shortlinks',
+            'local_shortlinks',
+            $link->get('id'),
+            user::instance($USER->id),
+            $tags,
+        );
         $shorturl = $api->create_public_shortlink('local_shortlinks', 'url', $link->get('id'), $minlength, $maxlength);
         $link->set('shorturl', $shorturl->out_as_local_url(false));
         $link->save();
