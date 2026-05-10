@@ -86,7 +86,7 @@ class links extends table_sql {
         $filter = ['userid' => $USER->id];
         $total = link::count_records($filter);
         $this->pagesize($pagesize, $total);
-        $this->rawdata = link::get_records($filter, 'timecreated', 'DESC');
+        $this->rawdata = link::get_records($filter, 'timecreated', 'DESC', $this->get_page_start(), $this->get_page_size());
 
         // Set initial bars.
         if ($useinitialsbar) {
