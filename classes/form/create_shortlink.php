@@ -20,7 +20,8 @@ use core\context;
 use core\url;
 use core_form\dynamic_form;
 use core\context\system;
-use local_shortlinks\local\link;
+use Exception;
+use local_shortlinks\local\api;
 
 /**
  * Form to create new short links.
@@ -50,29 +51,16 @@ class create_shortlink extends dynamic_form {
 
     #[\Override]
     public function process_dynamic_submission() {
-        global $CFG, $USER;
-
         $data = $this->get_data();
         if (!$data) {
             return ['success' => false];
         }
 
-        $api = \core\di::get(\core\shortlink::class);
-        $db = \core\di::get(\moodle_database::class);
-
-        $transaction = $db->start_delegated_transaction();
-
-        $link = new link(record: (object) [
-            'userid' => $USER->id,
-            'destinationurl' => $data->destinationurl,
-            'shorturl' => $CFG->wwwroot, // Temporary until the actual shorturl is generated.
-        ]);
-        $link->save();
-        $shorturl = $api->create_public_shortlink('local_shortlinks', 'url', $link->get('id'));
-        $link->set('shorturl', $shorturl->out_as_local_url(false));
-        $link->save();
-
-        $transaction->allow_commit();
+        try {
+            api::create($data->destinationurl);
+        } catch (Exception $th) {
+            return false;
+        }
 
         return ['success' => true];
     }
