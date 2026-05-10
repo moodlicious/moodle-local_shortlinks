@@ -16,10 +16,13 @@
 
 namespace local_shortlinks\output\pages;
 
+use core\context\system;
 use core\output\html_writer;
 use core\output\named_templatable;
 use core\output\renderable;
 use core\output\renderer_base;
+use core_reportbuilder\system_report_factory;
+use local_shortlinks\reportbuilder\local\systemreports\links;
 
 /**
  * Short link handler.
@@ -37,6 +40,8 @@ class home implements named_templatable, renderable {
      */
     public function __construct() {
         global $PAGE;
+
+        $PAGE->set_context(system::instance());
         $PAGE->set_url(self::URL);
         $title = get_string('pluginname', 'local_shortlinks');
         $PAGE->set_title($title);
@@ -54,15 +59,10 @@ class home implements named_templatable, renderable {
      */
     #[\Override]
     public function export_for_template(renderer_base $renderer): array {
-        $table = new \local_shortlinks\output\tables\links('links');
-
-        ob_start();
-        $table->out(10, true);
-        $tablehtml = ob_get_contents() ?: '';
-        ob_end_clean();
+        $report = system_report_factory::create(links::class, system::instance());
 
         return ['html' => implode([
-            html_writer::tag('section', $tablehtml),
+            html_writer::tag('section', $report->output()),
         ])];
     }
 
