@@ -71,7 +71,13 @@ class links extends table_sql {
      * @return string
      */
     private static function html_link(url $url): string {
-        return html_writer::link($url, $url->out(false), ['target' => '_blank']);
+        $domain = $url->get_host();
+        $favicon = "https://icons.duckduckgo.com/ip3/$domain.ico";
+
+        return html_writer::link($url, implode('', [
+            html_writer::img($favicon, $domain),
+            html_writer::span($url->out(false)),
+        ]), ['class' => 'local_shortlinks-link', 'target' => '_blank']);
     }
 
     #[\Override]

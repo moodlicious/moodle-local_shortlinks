@@ -1,0 +1,11 @@
+a.local_shortlinks-link {
+    display: flex;
+    gap: 1rem;
+    img {
+        flex-shrink: 0;
+        height: 1.5rem;
+        background: var(--bs-secondary-bg-subtle, white);
+        padding: 0.125rem;
+        border-radius: 99999px;
+    }
+}
