@@ -16,6 +16,8 @@
 
 namespace local_shortlinks\local;
 
+use local_shortlinks\local\enums\type;
+
 /**
  * API Interface for managing user defined shortlinks via this plugin.
  *
@@ -25,14 +27,28 @@ namespace local_shortlinks\local;
  */
 class api {
     /**
+     * Maps the type of link to the length of shortcode.
+     *
+     * - Short links use length of 6.
+     * - Long unguessable links use length of 12, that is the maximum length supported by core\shortlinks.
+     * @var array<type, array{int, int}>
+     */
+    private const TYPE_TO_LENGTH = [
+        type::SHORT->value => [6, 6],
+        type::LONG->value => [12, 12],
+    ];
+    /**
      * Creates a short link for the current user.
      * @param string $destinationurl
+     * @param type $type
      * @return void
      */
-    public static function create(string $destinationurl): void {
+    public static function create(string $destinationurl, type $type = type::SHORT): void {
         global $CFG, $USER;
         $api = \core\di::get(\core\shortlink::class);
         $db = \core\di::get(\moodle_database::class);
+
+        [$minlength, $maxlength] = static::TYPE_TO_LENGTH[$type->value];
 
         $transaction = $db->start_delegated_transaction();
 
@@ -42,7 +58,7 @@ class api {
             'shorturl' => $CFG->wwwroot, // Temporary until the actual shorturl is generated.
         ]);
         $link->save();
-        $shorturl = $api->create_public_shortlink('local_shortlinks', 'url', $link->get('id'));
+        $shorturl = $api->create_public_shortlink('local_shortlinks', 'url', $link->get('id'), $minlength, $maxlength);
         $link->set('shorturl', $shorturl->out_as_local_url(false));
         $link->save();
 

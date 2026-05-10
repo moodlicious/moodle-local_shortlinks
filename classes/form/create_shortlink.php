@@ -22,6 +22,7 @@ use core_form\dynamic_form;
 use core\context\system;
 use Exception;
 use local_shortlinks\local\api;
+use local_shortlinks\local\enums\type;
 
 /**
  * Form to create new short links.
@@ -37,6 +38,9 @@ class create_shortlink extends dynamic_form {
 
         $form->addElement('text', 'destinationurl', get_string('destinationurl', 'local_shortlinks'));
         $form->setType('destinationurl', PARAM_URL);
+
+        $form->addElement('checkbox', 'unguessable', get_string('unguessable', 'local_shortlinks'));
+        $form->addHelpButton('unguessable', 'unguessable', 'local_shortlinks');
     }
 
     #[\Override]
@@ -57,7 +61,9 @@ class create_shortlink extends dynamic_form {
         }
 
         try {
-            api::create($data->destinationurl);
+            $destinationurl = $data->destinationurl;
+            $type = $data->unguessable ? type::LONG : type::SHORT;
+            api::create($destinationurl, type: $type);
         } catch (Exception $th) {
             return ['success' => false];
         }
