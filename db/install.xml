@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/shortlinks/db" VERSION="20260509" COMMENT="XMLDB file for local_shortlinks"
+<XMLDB PATH="local/shortlinks/db" VERSION="20260513" COMMENT="XMLDB file for local_shortlinks"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -13,6 +13,7 @@
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The user this record belongs to"/>
         <FIELD NAME="destinationurl" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The destination URL"/>
         <FIELD NAME="shorturl" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="unguessablecode" TYPE="char" LENGTH="128" NOTNULL="false" SEQUENCE="false" COMMENT="Additional unguessable code to match"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

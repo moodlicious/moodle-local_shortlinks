@@ -56,5 +56,20 @@ function xmldb_local_shortlinks_upgrade($oldversion): bool {
         upgrade_plugin_savepoint(true, $newversion, 'local', 'shortlinks');
     }
 
+    $newversion = 2026051300;
+    if ($oldversion < $newversion) {
+        // Define field unguessablecode to be added to local_shortlinks.
+        $table = new xmldb_table('local_shortlinks');
+        $field = new xmldb_field('unguessablecode', XMLDB_TYPE_CHAR, '128', null, null, null, null, 'shorturl');
+
+        // Conditionally launch add field unguessablecode.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Shortlinks savepoint reached.
+        upgrade_plugin_savepoint(true, $newversion, 'local', 'shortlinks');
+    }
+
     return true;
 }

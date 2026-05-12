@@ -45,6 +45,11 @@ class link extends persistent {
             'shorturl' => [
                 'type' => PARAM_URL,
             ],
+            'unguessablecode' => [
+                'type' => PARAM_TEXT,
+                'null' => NULL_ALLOWED,
+                'default' => null,
+            ],
         ];
     }
 }
