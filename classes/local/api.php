@@ -38,7 +38,9 @@ class api {
     private const TYPE_TO_LENGTH = [
         type::SHORT->value => [6, 6],
         type::LONG->value => [12, 12],
+        type::UNGUESSABLE->value => [12, 12],
     ];
+
     /**
      * Creates a short link for the current user.
      * @param string $destinationurl
@@ -52,6 +54,7 @@ class api {
         $db = \core\di::get(\moodle_database::class);
 
         [$minlength, $maxlength] = static::TYPE_TO_LENGTH[$type->value];
+        $unguessablecode = $type === type::UNGUESSABLE ? link::generate_unguessable_code() : null;
 
         $transaction = $db->start_delegated_transaction();
 
@@ -59,6 +62,7 @@ class api {
             'userid' => $USER->id,
             'destinationurl' => $destinationurl,
             'shorturl' => $CFG->wwwroot, // Temporary until the actual shorturl is generated.
+            'unguessablecode' => $unguessablecode,
         ]);
         $link->save();
         core_tag_tag::set_item_tags(
@@ -69,6 +73,9 @@ class api {
             $tags,
         );
         $shorturl = $api->create_public_shortlink('local_shortlinks', 'url', $link->get('id'), $minlength, $maxlength);
+        if ($unguessablecode) {
+            $shorturl->param('c', $unguessablecode);
+        }
         $link->set('shorturl', $shorturl->out_as_local_url(false));
         $link->save();
 

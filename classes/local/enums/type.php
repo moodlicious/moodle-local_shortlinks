@@ -26,4 +26,18 @@ namespace local_shortlinks\local\enums;
 enum type: string {
     case SHORT = 'short';
     case LONG = 'long';
+    case UNGUESSABLE = 'unguessable';
+
+    /**
+     * Gets an associated array, key is type value, value is language string.
+     * Suitable for use in form select.
+     * @return string[]
+     */
+    public static function get_menu() {
+        return [
+            self::SHORT->value => get_string('linktype:short', 'local_shortlinks'),
+            self::LONG->value => get_string('linktype:long', 'local_shortlinks'),
+            self::UNGUESSABLE->value => get_string('linktype:unguessable', 'local_shortlinks'),
+        ];
+    }
 }
