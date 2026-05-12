@@ -32,7 +32,8 @@ class api {
      * Maps the type of link to the length of shortcode.
      *
      * - Short links use length of 6.
-     * - Long unguessable links use length of 12, that is the maximum length supported by core\shortlinks.
+     * - Long links use length of 12, that is the maximum length supported by core\shortlinks.
+     * - Unguessable links also 12, but with additional code generated separately.
      * @var array<type, array{int, int}>
      */
     private const TYPE_TO_LENGTH = [
