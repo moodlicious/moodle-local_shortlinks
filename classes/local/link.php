@@ -17,6 +17,7 @@
 namespace local_shortlinks\local;
 
 use core\persistent;
+use core_useragent;
 
 /**
  * Short link handler.
@@ -46,5 +47,34 @@ class link extends persistent {
                 'type' => PARAM_URL,
             ],
         ];
+    }
+
+    /**
+     * Links been clicked, so track it.
+     * @return void
+     */
+    public function track(): void {
+        global $USER;
+
+        $userid = isloggedin() ? $USER->id : 0;
+        $timeclicked = time();
+        $useragent = core_useragent::get_user_agent_string();
+        $isbot = core_useragent::is_web_crawler();
+        $devicetype = core_useragent::get_device_type();
+        $browser = core_useragent::get_browser_version_classes(); // Wrong, fix me.
+        $os = null;
+        $ipaddress = getremoteaddr();
+
+        dd([
+            'userid' => $userid,
+            'useragent' => $useragent,
+            'isbot' => $isbot,
+            'devicetype' => $devicetype,
+            'browser' => $browser,
+            'ipaddress' => $ipaddress,
+        ]);
+
+        $this->save();
+        return;
     }
 }

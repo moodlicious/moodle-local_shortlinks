@@ -17,6 +17,7 @@
 namespace local_shortlinks;
 
 use core\shortlink_handler_interface;
+use core\shutdown_manager;
 use core\url;
 use local_shortlinks\local\link;
 
@@ -55,6 +56,18 @@ class shortlink_handler implements shortlink_handler_interface {
         if ($link === false) {
             return null;
         }
+
+        // Analytics tracking after shutdown so client don't need to feel the effect
+        // of the potentially slow tracking function.
+        shutdown_manager::register_function(function () use ($link) {
+            // Flush everything.
+            @ob_end_flush();
+            @flush();
+            @fastcgi_finish_request();
+
+            $link->track();
+            return;
+        });
 
         try {
             return new url($link->get('destinationurl'));
