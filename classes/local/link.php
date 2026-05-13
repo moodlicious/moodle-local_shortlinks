@@ -31,6 +31,12 @@ class link extends persistent {
     public const TABLE = 'local_shortlinks';
 
     /**
+     * The unguessable param name in shortlinks.
+     * @var string
+     */
+    public const UNGUESSABLE_PARAM_NAME = 'c';
+
+    /**
      * Length of unguessable code.
      * @var int
      */

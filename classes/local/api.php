@@ -75,7 +75,7 @@ class api {
         );
         $shorturl = $api->create_public_shortlink('local_shortlinks', 'url', $link->get('id'), $minlength, $maxlength);
         if ($unguessablecode) {
-            $shorturl->param('c', $unguessablecode);
+            $shorturl->param(link::UNGUESSABLE_PARAM_NAME, $unguessablecode);
         }
         $link->set('shorturl', $shorturl->out_as_local_url(false));
         $link->save();
