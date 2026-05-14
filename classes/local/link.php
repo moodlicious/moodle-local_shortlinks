@@ -17,6 +17,7 @@
 namespace local_shortlinks\local;
 
 use core\persistent;
+use function strlen;
 
 /**
  * Short link handler.
@@ -28,6 +29,24 @@ use core\persistent;
 class link extends persistent {
     /** @var string The table name. */
     public const TABLE = 'local_shortlinks';
+
+    /**
+     * The unguessable param name in shortlinks.
+     * @var string
+     */
+    public const UNGUESSABLE_PARAM_NAME = 'c';
+
+    /**
+     * Length of unguessable code.
+     * @var int
+     */
+    private const UNGUESSABLE_CODE_LENGTH = 16;
+
+    /**
+     * List of base62 chars.
+     * @var string
+     */
+    private const UNGUESSABLE_CHARS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
     /**
      * {@inheritDoc}
@@ -45,6 +64,22 @@ class link extends persistent {
             'shorturl' => [
                 'type' => PARAM_URL,
             ],
+            'unguessablecode' => [
+                'type' => PARAM_TEXT,
+                'null' => NULL_ALLOWED,
+                'default' => null,
+            ],
         ];
+    }
+
+
+    /**
+     * Generates unguessable code.
+     * @return string
+     */
+    public static function generate_unguessable_code() {
+        $chars = array_fill(0, self::UNGUESSABLE_CODE_LENGTH, null);
+        $chars = array_map(fn() => self::UNGUESSABLE_CHARS[rand(0, strlen(self::UNGUESSABLE_CHARS) - 1)], $chars);
+        return implode($chars);
     }
 }

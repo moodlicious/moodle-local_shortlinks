@@ -39,11 +39,17 @@ class create_shortlink extends dynamic_form {
         $form->addElement('text', 'destinationurl', get_string('destinationurl', 'local_shortlinks'));
         $form->setType('destinationurl', PARAM_URL);
 
-        $form->addElement('checkbox', 'unguessable', get_string('unguessable', 'local_shortlinks'));
-        $form->addHelpButton('unguessable', 'unguessable', 'local_shortlinks');
-
         $form->addElement('header', 'advanced', get_string('advanced'));
         $form->setExpanded('advanced', false);
+
+        $form->addElement(
+            'select',
+            'linktype',
+            get_string('form:linktype', 'local_shortlinks'),
+            type::get_menu(),
+            type::SHORT->value,
+        );
+        $form->addHelpButton('linktype', 'form:linktype', 'local_shortlinks');
 
         $form->addElement('tags', 'tags', get_string('tags'), [
             'itemtype' => 'local_shortlinks',
@@ -69,8 +75,8 @@ class create_shortlink extends dynamic_form {
         }
 
         try {
+            $type = type::tryFrom($data->linktype) ?? type::SHORT;
             $destinationurl = $data->destinationurl;
-            $type = $data->unguessable ? type::LONG : type::SHORT;
             $tags = $data->tags;
             api::create($destinationurl, type: $type, tags: $tags);
         } catch (Exception $th) {

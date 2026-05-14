@@ -27,6 +27,16 @@
 $string['destinationurl'] = 'Destination URL';
 $string['error:create'] = 'Something went wrong while creating your link, please try again later.';
 $string['form:create'] = 'Create short link';
+$string['form:linktype'] = 'Link type';
+$string['form:linktype_help'] = 'The type of link to generate
+
+- **Short**: A standard short link
+- **Long**: A longer short link
+- **Unguessable**: An extra long link which will help prevent users or bots from guessing or crawling
+';
+$string['linktype:long'] = 'Long';
+$string['linktype:short'] = 'Short';
+$string['linktype:unguessable'] = 'Unguessable';
 $string['pluginname'] = 'Short Links';
 $string['shortlinks:create'] = 'Create short links';
 $string['shortlinks:delete'] = 'Delete short links';
@@ -34,5 +44,3 @@ $string['shortlinks:edit'] = 'Edit short links';
 $string['shorturl'] = 'Shortened URL';
 $string['success:created'] = 'Short Link successfully created';
 $string['tagarea_local_shortlinks'] = 'Short links';
-$string['unguessable'] = 'Unguessable';
-$string['unguessable_help'] = 'Creates longer link which will help prevent users or bots from guessing or crawling';

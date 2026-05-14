@@ -56,6 +56,14 @@ class shortlink_handler implements shortlink_handler_interface {
             return null;
         }
 
+        $unguessablecode = $link->get('unguessablecode');
+        if ($unguessablecode) {
+            $unguessablecodeparam = optional_param(link::UNGUESSABLE_PARAM_NAME, null, PARAM_TEXT);
+            if ($unguessablecode !== $unguessablecodeparam) {
+                return null;
+            }
+        }
+
         try {
             return new url($link->get('destinationurl'));
         } catch (\Exception $th) {
