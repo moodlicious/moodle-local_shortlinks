@@ -102,7 +102,10 @@ class links_controller {
         if ($confirmed) {
             require_sesskey();
             $link->delete();
-            notification::add('Deleted', \core\output\notification::NOTIFY_SUCCESS); // TODO: Translate.
+            notification::add(
+                get_string('shortlink:deleted', 'local_shortlinks'),
+                \core\output\notification::NOTIFY_SUCCESS,
+            );
             return self::redirect_to_callable(
                 $request,
                 $response,
@@ -112,13 +115,14 @@ class links_controller {
 
         $response->getBody()->write($OUTPUT->header());
         $response->getBody()->write($OUTPUT->confirm(
-            'Are you sure?', // TODO: Translate.
+            get_string('shortlink:delete:content', 'local_shortlinks'),
             util::get_path_for_callable(
                 [self::class, 'delete_link'],
                 params: ['link' => $link->get('id')],
                 queryparams: ['confirm' => true],
             ),
             util::get_path_for_callable([self::class, 'home']),
+            ['confirmtitle' => get_string('shortlink:delete:title', 'local_shortlinks')],
         ));
         $response->getBody()->write($OUTPUT->footer());
 
