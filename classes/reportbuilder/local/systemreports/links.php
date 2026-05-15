@@ -16,11 +16,16 @@
 
 namespace local_shortlinks\reportbuilder\local\systemreports;
 
+use core\lang_string;
+use core\output\pix_icon;
+use core\router\util;
 use core_reportbuilder\local\filters\user;
+use core_reportbuilder\local\report\action;
 use core_reportbuilder\system_report;
 use core_tag\reportbuilder\local\entities\tag;
 use local_shortlinks\local\link;
 use local_shortlinks\reportbuilder\local\entities\link as link_entity;
+use local_shortlinks\route\shim\redirects;
 
 /**
  * Links report.
@@ -46,6 +51,9 @@ class links extends system_report {
         $this->add_columns();
         $this->add_filters();
         $this->set_conditions();
+
+        $this->add_base_fields("{$entitymainalias}.id");
+        $this->add_actions();
 
         $this->set_initial_sort_column('link:timecreated', SORT_DESC);
 
@@ -99,5 +107,20 @@ class links extends system_report {
         $this->set_condition_values([
             'link:userid_operator' => user::USER_CURRENT,
         ]);
+    }
+
+    /**
+     * Add link actions.
+     * @return void
+     */
+    protected function add_actions(): void {
+        // Using redirects for now because action doesn't support path params yet.
+        $this->add_action(new action(
+            url: util::get_path_for_callable([redirects::class, 'delete_link'], queryparams: ['id' => ':id']),
+            icon: new pix_icon('t/delete', '', 'core'),
+            attributes: ['class' => 'text-danger'],
+            title: new lang_string('delete'),
+        ));
+        return;
     }
 }
