@@ -18,6 +18,7 @@ namespace local_shortlinks;
 
 use core\shortlink_handler_interface;
 use core\url;
+use local_shortlinks\event\link_redirected;
 use local_shortlinks\local\link;
 
 /**
@@ -65,7 +66,9 @@ class shortlink_handler implements shortlink_handler_interface {
         }
 
         try {
-            return new url($link->get('destinationurl'));
+            $url = new url($link->get('destinationurl'));
+            link_redirected::create_from_object($link)->trigger();
+            return $url;
         } catch (\Exception $th) {
             debugging($th->getMessage(), DEBUG_DEVELOPER, $th->getTrace());
             return null;
