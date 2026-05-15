@@ -41,8 +41,7 @@ class links_controller {
      * @return ResponseInterface
      */
     #[route(
-        // Using index.php for now because '/' doesn't seem to work with apache.
-        path: '/index.php',
+        path: '',
         method: ['GET'],
         requirelogin: new require_login(requirelogin: true),
     )]
