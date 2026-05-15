@@ -93,7 +93,7 @@ class create_shortlink extends dynamic_form {
 
     #[\Override]
     protected function get_page_url_for_dynamic_submission(): url {
-        return new url(\local_shortlinks\output\pages\home::URL);
+        return \local_shortlinks\output\pages\home::get_url();
     }
 
     /**

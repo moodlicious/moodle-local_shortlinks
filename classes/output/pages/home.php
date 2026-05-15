@@ -21,8 +21,10 @@ use core\output\html_writer;
 use core\output\named_templatable;
 use core\output\renderable;
 use core\output\renderer_base;
+use core\url;
 use core_reportbuilder\system_report_factory;
 use local_shortlinks\reportbuilder\local\systemreports\links;
+use local_shortlinks\route\controller\links_controller;
 
 /**
  * Short link handler.
@@ -32,8 +34,14 @@ use local_shortlinks\reportbuilder\local\systemreports\links;
  * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class home implements named_templatable, renderable {
-    /** @var string */
-    public const URL = '/local/shortlinks/index.php';
+    /**
+     * Returns the URL for this page.
+     * @return url
+     */
+    public static function get_url(): url {
+        $url = \core\router\util::get_path_for_callable(callable: [links_controller::class, 'home']);
+        return $url;
+    }
 
     /**
      * Constructor.
@@ -42,7 +50,7 @@ class home implements named_templatable, renderable {
         global $PAGE;
 
         $PAGE->set_context(system::instance());
-        $PAGE->set_url(self::URL);
+        $PAGE->set_url(self::get_url());
         $title = get_string('pluginname', 'local_shortlinks');
         $PAGE->set_title($title);
         $PAGE->set_heading($title);
