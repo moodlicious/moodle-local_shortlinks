@@ -25,6 +25,7 @@ use core_reportbuilder\system_report;
 use core_tag\reportbuilder\local\entities\tag;
 use local_shortlinks\local\link;
 use local_shortlinks\reportbuilder\local\entities\link as link_entity;
+use local_shortlinks\route\controller\links_controller;
 use local_shortlinks\route\shim\redirects;
 
 /**
@@ -114,13 +115,30 @@ class links extends system_report {
      * @return void
      */
     protected function add_actions(): void {
-        // Using redirects for now because action doesn't support path params yet.
-        $this->add_action(new action(
-            url: util::get_path_for_callable([redirects::class, 'delete_link'], queryparams: ['id' => ':id']),
-            icon: new pix_icon('t/delete', '', 'core'),
-            attributes: ['class' => 'text-danger'],
-            title: new lang_string('delete'),
-        ));
+        // Using redirects for now because action class doesn't support path params yet.
+        $this->add_action(
+            (new action(
+                url: util::get_path_for_callable([redirects::class, 'delete_link'], queryparams: ['id' => ':id']),
+                icon: new pix_icon('t/delete', '', 'core'),
+                attributes: [
+                    'class' => 'text-danger',
+                    'data-modal' => 'confirmation',
+                    'data-modal-title-str' => json_encode(['shortlink:delete:title', 'local_shortlinks']),
+                    'data-modal-content-str' => json_encode(['shortlink:delete:content', 'local_shortlinks']),
+                    'data-modal-yes-button-str' => json_encode(['shortlink:delete:yes', 'local_shortlinks']),
+                    'data-modal-destination' => ':deleteurl',
+                ],
+                title: new lang_string('delete'),
+            ))
+                ->add_callback(function ($row) {
+                    $row->deleteurl = util::get_path_for_callable(
+                        [links_controller::class, 'delete_link'],
+                        params: ['link' => $row->id],
+                        queryparams: ['confirm' => true, 'sesskey' => sesskey()],
+                    )->out(false);
+                    return true;
+                }),
+        );
         return;
     }
 }
