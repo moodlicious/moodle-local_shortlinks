@@ -22,6 +22,7 @@ use core\output\named_templatable;
 use core\output\renderable;
 use core\output\renderer_base;
 use core\url;
+use core_reportbuilder\output\report_action;
 use core_reportbuilder\system_report_factory;
 use local_shortlinks\reportbuilder\local\systemreports\links;
 use local_shortlinks\route\controller\links_controller;
@@ -55,9 +56,6 @@ class home implements named_templatable, renderable {
         $PAGE->set_title($title);
         $PAGE->set_heading($title);
 
-        $PAGE->add_header_action(
-            html_writer::link('#', get_string('create'), ['id' => 'create_shortlink', 'class' => 'btn btn-primary']),
-        );
         $PAGE->requires->js_call_amd('local_shortlinks/main', 'init', []);
     }
 
@@ -67,7 +65,16 @@ class home implements named_templatable, renderable {
      */
     #[\Override]
     public function export_for_template(renderer_base $renderer): array {
+        global $PAGE;
         $report = system_report_factory::create(links::class, system::instance());
+
+        if (has_capability('local/shortlinks:create', $PAGE->context)) {
+            $report->set_report_action(new report_action(
+                get_string('create'),
+                ['id' => 'create_shortlink', 'class' => 'btn btn-primary', 'href' => '#'],
+                'a'
+            ));
+        }
 
         return ['html' => implode([
             html_writer::tag('section', $report->output()),
