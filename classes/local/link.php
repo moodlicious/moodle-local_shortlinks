@@ -94,7 +94,7 @@ class link extends persistent {
 
     #[\Override]
     protected function after_update($result) {
-        if ($result) {
+        if (!$result) {
             return;
         }
 
@@ -104,7 +104,7 @@ class link extends persistent {
 
     #[\Override]
     protected function after_delete($result) {
-        if ($result) {
+        if (!$result) {
             return;
         }
 
