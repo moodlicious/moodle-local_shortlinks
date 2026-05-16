@@ -17,9 +17,15 @@
 namespace local_shortlinks\route\controller;
 
 use core\context\system;
+use core\notification;
+use core\param;
 use core\router\require_login;
 use core\router\route;
 use core\router\route_controller;
+use core\router\schema\parameters\path_parameter;
+use core\router\schema\parameters\query_parameter;
+use core\router\util;
+use local_shortlinks\local\link;
 use local_shortlinks\output\pages\home;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -57,6 +63,67 @@ class links_controller {
 
         $response->getBody()->write($OUTPUT->header());
         $response->getBody()->write($OUTPUT->render($page));
+        $response->getBody()->write($OUTPUT->footer());
+
+        return $response;
+    }
+
+    /**
+     * Home page.
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface
+     */
+    #[route(
+        path: '/{link}/delete',
+        method: ['GET', 'POST'],
+        pathtypes: [
+            new path_parameter(
+                name: 'link',
+                type: param::INT,
+            ),
+        ],
+        requirelogin: new require_login(requirelogin: true),
+    )]
+    public function delete_link(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        int $link,
+    ): ResponseInterface {
+        global $OUTPUT;
+        require_capability('local/shortlinks:delete', system::instance());
+
+        $link = link::get_record(['id' => $link]);
+        if (!$link) {
+            return self::page_not_found($request, $response);
+        }
+
+        $confirmed = optional_param('confirm', false, param::BOOL->value);
+        if ($confirmed) {
+            require_sesskey();
+            $link->delete();
+            notification::add(
+                get_string('shortlink:deleted', 'local_shortlinks'),
+                \core\output\notification::NOTIFY_SUCCESS,
+            );
+            return self::redirect_to_callable(
+                $request,
+                $response,
+                [self::class, 'home'],
+            );
+        }
+
+        $response->getBody()->write($OUTPUT->header());
+        $response->getBody()->write($OUTPUT->confirm(
+            get_string('shortlink:delete:content', 'local_shortlinks'),
+            util::get_path_for_callable(
+                [self::class, 'delete_link'],
+                params: ['link' => $link->get('id')],
+                queryparams: ['confirm' => true],
+            ),
+            util::get_path_for_callable([self::class, 'home']),
+            ['confirmtitle' => get_string('shortlink:delete:title', 'local_shortlinks')],
+        ));
         $response->getBody()->write($OUTPUT->footer());
 
         return $response;
