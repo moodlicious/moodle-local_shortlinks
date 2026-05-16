@@ -16,6 +16,7 @@
 
 namespace local_shortlinks\reportbuilder\local\systemreports;
 
+use core\context\system;
 use core\lang_string;
 use core\output\pix_icon;
 use core\router\util;
@@ -131,6 +132,9 @@ class links extends system_report {
                 title: new lang_string('delete'),
             ))
                 ->add_callback(function ($row) {
+                    if (!has_capability('local/shortlinks:delete', system::instance())) {
+                        return false;
+                    }
                     $row->deleteurl = util::get_path_for_callable(
                         [links_controller::class, 'delete_link'],
                         params: ['link' => $row->id],
