@@ -26,6 +26,10 @@
 
 $string['destinationurl'] = 'Destination URL';
 $string['error:create'] = 'Something went wrong while creating your link, please try again later.';
+$string['events:link_created'] = 'Short link created';
+$string['events:link_deleted'] = 'Short link deleted';
+$string['events:link_redirected'] = 'Short link used and redirected';
+$string['events:link_updated'] = 'Short link updated';
 $string['form:create'] = 'Create short link';
 $string['form:linktype'] = 'Link type';
 $string['form:linktype_help'] = 'The type of link to generate

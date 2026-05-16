@@ -17,6 +17,9 @@
 namespace local_shortlinks\local;
 
 use core\persistent;
+use local_shortlinks\event\link_created;
+use local_shortlinks\event\link_deleted;
+use local_shortlinks\event\link_updated;
 use function strlen;
 
 /**
@@ -81,5 +84,31 @@ class link extends persistent {
         $chars = array_fill(0, self::UNGUESSABLE_CODE_LENGTH, null);
         $chars = array_map(fn() => self::UNGUESSABLE_CHARS[rand(0, strlen(self::UNGUESSABLE_CHARS) - 1)], $chars);
         return implode($chars);
+    }
+
+    #[\Override]
+    protected function after_create() {
+        link_created::create_from_object($this)->trigger();
+        return;
+    }
+
+    #[\Override]
+    protected function after_update($result) {
+        if ($result) {
+            return;
+        }
+
+        link_updated::create_from_object($this)->trigger();
+        return;
+    }
+
+    #[\Override]
+    protected function after_delete($result) {
+        if ($result) {
+            return;
+        }
+
+        link_deleted::create_from_object($this)->trigger();
+        return;
     }
 }
